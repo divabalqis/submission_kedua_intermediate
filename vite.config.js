@@ -88,7 +88,7 @@ export default defineConfig({
     port: 5173,
     allowedHosts: [
       "divabalqis.github.io", // biar semua subdomain ngrok otomatis diizinkan
-      "venerable-souffle-832034.netlify.app",
+      ".netlify.app",
     ],
   },
 });

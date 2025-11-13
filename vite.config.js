@@ -89,6 +89,7 @@ export default defineConfig({
     allowedHosts: [
       "divabalqis.github.io", // biar semua subdomain ngrok otomatis diizinkan
       ".netlify.app",
+      ".ngrok-free.app",
     ],
   },
 });

@@ -53,7 +53,6 @@ function updateNavbar() {
       <li><a href="#/">Beranda</a></li>
       <li><a href="#/login">Login</a></li>
       <li><a href="#/register">Register</a></li>
-      <li><a href="#/favorite">❤️ Favorit</a></li>
     `;
     profileName.textContent = '';
   }

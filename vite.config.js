@@ -87,9 +87,8 @@ export default defineConfig({
     host: true,
     port: 5173,
     allowedHosts: [
-      "divabalqis.github.io", // biar semua subdomain ngrok otomatis diizinkan
+      "divabalqis.github.io", 
       ".netlify.app",
-      ".ngrok-free.app",
     ],
   },
 });

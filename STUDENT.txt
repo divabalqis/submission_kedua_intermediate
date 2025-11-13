@@ -1,0 +1,10 @@
+ID: F429D5X0501
+Nama: Diva Nabilla Balqis
+Kelas: Belajar Pengembangan Web Intermediate
+API: Dicoding Story API (https://story-api.dicoding.dev/v1)
+VAPID_PUBLIC_KEY: 'BCCs2eonMI-6H2ctvFaWg-UYdDv387Vno_bzUzALpB442r2lCnsHmtrx8biyPi_E-1fSGABK_Qs_GlvPoJJqxbk'
+URL Deployment: 
+Keterangan: Submission 2 
+Catatan Tambahan:
+- Tombol "Install App" akan hilang jika aplikasi sudah diinstall.
+- Tombol notifikasi toggle berfungsi untuk hidup/mati tanpa meminta izin browser lagi.

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dicoding Story App</title>
+
+    <link rel="icon" href="./favicon.png" />
+    <link rel="manifest" href="./manifest.json" />
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+
+    <script type="module" crossorigin src="./assets/index-Dwe4uGmw.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-B3D_soDy.css">
+  <link rel="manifest" href="./manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="./registerSW.js"></script></head>
+
+  <body>
+    <header class="site-header">
+      <a class="skip-link" href="#main-content">Lewati ke konten utama</a>
+      <div class="header-container">
+        <a href="#/" class="brand-name">MyStory</a>
+        <nav id="navigation-drawer" class="navigation-drawer">
+          <ul class="nav-list">
+            <li><a href="#/">Beranda</a></li>
+            <li><a href="#/add-story">Tambah Story</a></li>
+            <li><a href="#/favorite">Favorit</a></li>
+          </ul>
+        </nav>
+        <div id="profile-name" class="profile-name"></div>
+        <button id="drawer-button" class="drawer-button" aria-label="Menu Navigasi">☰</button>
+      </div>
+    </header>
+
+    <main id="main-content" class="main-content page-transition" tabindex="-1">
+      <!-- konten akan dirender oleh index.js -->
+    </main>
+
+    <footer class="site-footer">
+      <p>&copy; F429D5X0501 — Diva Nabilla Balqis — Submission Proyek Kedua Belajar Pengembangan Web Intermediate</p>
+    </footer>
+
+    <div id="popup" class="popup">
+      <div class="popup-content"><p id="popup-message"></p></div>
+    </div>
+
+    <div class="pwa-buttons">
+      <button id="install-btn" style="display:none;">📲 Install App</button>
+      <button id="notify-btn">🔔 Aktifkan Notifikasi</button>
+    </div>
+  </body>
+</html>

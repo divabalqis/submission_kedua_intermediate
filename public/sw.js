@@ -84,10 +84,10 @@ self.addEventListener('push', (event) => {
   console.log("Push event received");
   const data = event.data?.json() || {};
   const title = data.title || 'Cerita Baru!';
-  const options = {
-    body: data.body || 'Ada cerita baru',
-    icon: '/icons/icon-192.png',
-  };
+ const options = { 
+    body: data.options.body || 'Ada cerita baru', 
+    icon: '/icons/icon-192.png' 
+};
   event.waitUntil(self.registration.showNotification(title, options));
 });
 

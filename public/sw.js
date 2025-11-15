@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-globals */
 
-const CACHE_NAME = 'mystory-cache-v2';
+const CACHE_NAME = 'mystory-cache-v3';
 const OFFLINE_PAGE = '/offline.html';
 
 // Hanya cache file yang pasti ada di public / root
@@ -20,8 +20,9 @@ self.addEventListener('install', (e) => {
   e.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
-        return cache.addAll(PRECACHE_ASSETS.map(path => new Request(path, { cache: 'reload' })))
-          .catch(err => console.warn('Some assets failed to cache', err));
+        return cache.addAll(
+          PRECACHE_ASSETS.map(path => new Request(path, { cache: 'reload' }))
+        ).catch(err => console.warn('Some assets failed to cache', err));
       })
   );
   self.skipWaiting();
@@ -44,35 +45,49 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(req.url);
 
-  // API caching
+  // 1️⃣ API caching → data terakhir tetap tampil saat offline
   if (url.origin === 'https://story-api.dicoding.dev') {
     event.respondWith(
-      fetch(req).catch(() => caches.match(req))
+      fetch(req)
+        .then(res => {
+          const clone = res.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(req, clone));
+          return res;
+        })
+        .catch(() => caches.match(req))
     );
     return;
   }
 
-  // Navigation fallback
+  // 2️⃣ Navigation fallback → offline.html
   if (req.mode === 'navigate') {
     event.respondWith(
-      fetch(req).catch(() =>
-        caches.match(OFFLINE_PAGE)
-      )
+      fetch(req)
+        .then(res => {
+          const clone = res.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(req, clone));
+          return res;
+        })
+        .catch(() => caches.match(OFFLINE_PAGE))
     );
     return;
   }
 
-  // Default cache then network
+  // 3️⃣ Cache-first untuk script, style, image → tampilan tetap muncul
   event.respondWith(
     caches.match(req).then(cached => {
       return cached || fetch(req).then(res => {
         const clone = res.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(req, clone));
+        if (
+          req.destination === 'script' ||
+          req.destination === 'style' ||
+          req.destination === 'image'
+        ) {
+          caches.open(CACHE_NAME).then(cache => cache.put(req, clone));
+        }
         return res;
       }).catch(() => {
-        if (req.destination === 'image') {
-          return new Response('', { status: 404 });
-        }
+        if (req.destination === 'image') return new Response('', { status: 404 });
         return null;
       });
     })
@@ -84,10 +99,10 @@ self.addEventListener('push', (event) => {
   console.log("Push event received");
   const data = event.data?.json() || {};
   const title = data.title || 'Cerita Baru!';
- const options = { 
-    body: data.options.body || 'Ada cerita baru', 
+  const options = { 
+    body: data.body || 'Ada cerita baru', 
     icon: '/icons/icon-192.png' 
-};
+  };
   event.waitUntil(self.registration.showNotification(title, options));
 });
 

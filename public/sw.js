@@ -1,4 +1,6 @@
+
 /* eslint-disable no-restricted-globals */
+
 const CACHE_NAME = 'mystory-cache-v2';
 const OFFLINE_PAGE = '/offline.html';
 const PRECACHE_ASSETS = [
@@ -60,6 +62,7 @@ self.addEventListener('fetch', (event) => {
 });
 
 self.addEventListener('push', (event) => {
+  console.log("Push event received");
   const data = event.data ? event.data.json() : {};
   const title = data.title || 'Cerita Baru!';
   const options = { body: data.body || 'Ada cerita baru', icon: '/icons/icon-192.png' };

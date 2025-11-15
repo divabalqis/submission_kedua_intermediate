@@ -8,7 +8,6 @@ import CONFIG from '../config.js';
  */
 export const subscribeUserToPush = async (registration, token) => {
   if (!registration || !token) return null;
-
   try {
     // Cek apakah sudah ada subscription
     let existingSub = await registration.pushManager.getSubscription();
@@ -43,6 +42,7 @@ export const subscribeUserToPush = async (registration, token) => {
       const err = await res.json();
       throw new Error(err.message || 'Gagal subscribe server');
     }
+    console.log(res);
 
     console.log('✅ Push Subscription berhasil:', existingSub);
     return existingSub;

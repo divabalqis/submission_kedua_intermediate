@@ -4,8 +4,8 @@ import 'leaflet-geosearch/dist/geosearch.css';
 import routes from './routes/routes.js';
 import { getActiveRoute } from './routes/url-parser.js';
 import { subscribeUserToPush } from './utils/push-subscribe.js';
+import { unsubscribeUserFromPush } from './utils/push-unsubscribe.js';
 import App from './pages/app.js';
-
 
 // Elemen utama
 const mainContent = document.querySelector('#main-content');
@@ -99,9 +99,10 @@ const { installBtn, notifyBtn } = ensurePwaButtons();
 async function registerServiceWorker() {
   if ('serviceWorker' in navigator) {
     try {
-      const swUrl = `${import.meta.env.BASE_URL || '/'}sw.js`;
+      const swUrl = `/sw.js`;
       const reg = await navigator.serviceWorker.register(swUrl);
       console.log('✅ Service Worker terdaftar:', reg.scope);
+      console.log("SW URL:", swUrl);
       return reg;
     } catch (err) {
       console.error('❌ Gagal mendaftarkan Service Worker:', err);
@@ -116,15 +117,22 @@ let notifEnabled = localStorage.getItem('notifEnabled') === 'true';
 
 function updateNotifButton() {
   if (!notifyBtn) return;
-  notifyBtn.textContent = notifEnabled ? '🔔' : '🔕';
+  notifyBtn.textContent = notifEnabled ? 'Subscribe🔔' : 'Unsubscribe🔕';
 }
 
 async function initPush() {
   if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+
   const reg = await navigator.serviceWorker.ready;
   const token = localStorage.getItem('token');
-  if (notifEnabled && reg) await subscribeUserToPush(reg, token);
+
+  if (notifEnabled) {
+    await subscribeUserToPush(reg, token);
+  } else {
+    await unsubscribeUserFromPush(reg, token);
+  }
 }
+
 
 // Tombol notifikasi
 if (notifyBtn) {
@@ -134,11 +142,15 @@ if (notifyBtn) {
     updateNotifButton();
     const reg = await navigator.serviceWorker.ready;
     const token = localStorage.getItem('token');
-    if (notifEnabled && reg) {
-      await subscribeUserToPush(reg, token);
-      showPopup('Notifikasi diaktifkan', 'success');
-      new Notification('Aktif!', { body: 'Kamu akan menerima cerita terbaru.', icon: '/icons/icon-192.png' });
-    } else showPopup('Notifikasi dinonaktifkan', 'info');
+   if (notifEnabled && reg) {
+  await subscribeUserToPush(reg, token);
+  showPopup('Notifikasi diaktifkan', 'success');
+  new Notification('Aktif!', { body: 'Kamu akan menerima cerita terbaru.', icon: '/icons/icon-192.png' });
+} else {
+  await unsubscribeUserFromPush(reg, token);
+  showPopup('Notifikasi dinonaktifkan', 'info');
+}
+
   });
   updateNotifButton();
 }

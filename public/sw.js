@@ -1,6 +1,3 @@
-/// <reference no-default-lib="true"/>
-import { precacheAndRoute } from 'workbox-precaching';
-
 // =============================
 // 1. CUSTOM ASSETS (MANUAL CACHE)
 // =============================
@@ -10,7 +7,11 @@ const CUSTOM_ASSETS = [
   '/offline.html',
   '/manifest.json',
   '/favicon.png',
+
+  // CSS
   '/styles/styles.css',
+
+  // Scripts
   '/scripts/index.js',
   '/scripts/routes/routes.js',
   '/scripts/pages/home/home-page.js',
@@ -18,74 +19,87 @@ const CUSTOM_ASSETS = [
   '/scripts/pages/login/login-page.js',
   '/scripts/pages/register/register-page.js',
   '/scripts/pages/favorite/favorite-page.js',
+
+  // Icons
   '/icons/icon-192.png',
   '/icons/icon-512.png',
 ];
 
-// =============================
-// 2. Workbox Precache + Custom
-// =============================
-precacheAndRoute([
-  ...self.__WB_MANIFEST,  // inject dari vite/workbox
-  ...CUSTOM_ASSETS        // manual asset
-]);
-
-console.log('Service Worker: Workbox + Manual Cache aktif');
-
-const CACHE_NAME = 'mystory-cache-v2';
+const CACHE_NAME = 'mystory-cache-v3';
 const OFFLINE_PAGE = '/offline.html';
 
+console.log('Service Worker manual aktif tanpa Workbox');
+
 // =============================
-// 3. Install — Cache Custom
+// 2. INSTALL — Cache all assets
 // =============================
-self.addEventListener('install', (event) => {
+self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(CUSTOM_ASSETS))
+    caches.open(CACHE_NAME).then(cache => {
+      console.log('Caching assets...');
+      return cache.addAll(CUSTOM_ASSETS);
+    })
   );
   self.skipWaiting();
 });
 
 // =============================
-// 4. Activate
+// 3. ACTIVATE — Bersihkan cache lama
 // =============================
-self.addEventListener('activate', (event) => {
+self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(keys.map(k => (k !== CACHE_NAME ? caches.delete(k) : null)))
+      Promise.all(
+        keys.map(key => (key !== CACHE_NAME ? caches.delete(key) : null))
+      )
     )
   );
   self.clients.claim();
 });
 
 // =============================
-// 5. Fetch Handler
+// 4. FETCH HANDLER — Offline Ready
 // =============================
-self.addEventListener('fetch', (event) => {
+self.addEventListener('fetch', event => {
   const req = event.request;
+  const url = new URL(req.url);
 
   if (req.method !== 'GET') return;
 
-  const url = new URL(req.url);
-
-  // === Cache API Dicoding ===
+  // ====================================
+  // API Dicoding → Network First
+  // ====================================
   if (url.origin === 'https://story-api.dicoding.dev') {
     event.respondWith(
-      fetch(req).catch(() => caches.match(req))
+      fetch(req)
+        .then(res => res)
+        .catch(() => caches.match(req))
     );
     return;
   }
 
-  // === Navigation (offline fallback) ===
+  // ====================================
+  // Navigasi Halaman → Offline fallback
+  // ====================================
   if (req.mode === 'navigate') {
     event.respondWith(
-      fetch(req).catch(() =>
-        caches.match(req).then(r => r || caches.match(OFFLINE_PAGE))
-      )
+      fetch(req)
+        .then(res => {
+          // Simpan halaman ke cache
+          const clone = res.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(req, clone));
+          return res;
+        })
+        .catch(() =>
+          caches.match(req).then(cached => cached || caches.match(OFFLINE_PAGE))
+        )
     );
     return;
   }
 
-  // === Asset caching (cache-first) ===
+  // ====================================
+  // Asset (JS, CSS, Images) → Cache First
+  // ====================================
   event.respondWith(
     caches.match(req).then(cached => {
       if (cached) return cached;
@@ -97,41 +111,40 @@ self.addEventListener('fetch', (event) => {
           return res;
         })
         .catch(() => {
+          // fallback khusus gambar
           if (req.destination === 'image') {
             return new Response('', { status: 404 });
           }
-          return null;
         });
     })
   );
 });
 
 // =============================
-// 6. Push Notification
+// 5. PUSH NOTIFICATIONS
 // =============================
-self.addEventListener('push', (event) => {
-  console.log('Push received');
-
+self.addEventListener('push', event => {
   const data = event.data?.json() || {};
-  const title = data.title || 'Cerita Baru!';
+  const title = data.title || 'Notifikasi Baru';
 
   const options = {
-    body: data?.options?.body || data?.body || 'Ada cerita baru',
-    icon: data?.icon || '/icons/icon-192.png',
+    body: data.body || 'Ada informasi baru.',
+    icon: data.icon || '/icons/icon-192.png',
+    vibrate: [100, 50, 100],
   };
 
   event.waitUntil(self.registration.showNotification(title, options));
 });
 
 // =============================
-// 7. Notification Click
+// 6. NOTIFICATION CLICK
 // =============================
-self.addEventListener('notificationclick', (event) => {
+self.addEventListener('notificationclick', event => {
   event.notification.close();
 
   event.waitUntil(
-    clients.matchAll({ type: 'window' }).then((windows) => {
-      if (windows.length > 0) return windows[0].focus();
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(win => {
+      if (win.length > 0) return win[0].focus();
       return clients.openWindow('/');
     })
   );

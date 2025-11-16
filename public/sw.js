@@ -5,14 +5,30 @@ const CACHE_NAME = "mystory-cache-v3";
 
 // Semua file di /public
 const STATIC_ASSETS = [
-  "/",
-  "/index.html",
-  "/offline.html",
-  "/manifest.json",
-  "/favicon.png",
-  // "/styles/styles.css",
-  "/icons/icon-192.png",
-  "/icons/icon-512.png",
+//   "/",
+//   "/index.html",
+//   "/offline.html",
+//   "/manifest.json",
+//   "/favicon.png",
+//   // "/styles/styles.css",
+//   "/icons/icon-192.png",
+//   "/icons/icon-512.png",
+// ];
+    '/',
+  '/index.html',
+  '/offline.html',
+  '/manifest.json',
+  '/favicon.png',
+  '/styles/styles.css',
+  '/scripts/index.js',
+  '/scripts/routes/routes.js',
+  '/scripts/pages/home/home-page.js',
+  '/scripts/pages/add-story/add-story-page.js',
+  '/scripts/pages/login/login-page.js',
+  '/scripts/pages/register/register-page.js',
+  '/scripts/pages/favorite/favorite-page.js',
+  '/icons/icon-192.png',
+  '/icons/icon-512.png',
 ];
 
 // =============================

@@ -100,7 +100,7 @@ async function registerServiceWorker() {
   if ('serviceWorker' in navigator) {
     try {
       const swUrl = `/sw.js`;
-      const reg = await navigator.serviceWorker.register(swUrl);
+      const reg = await navigator.serviceWorker.register(swUrl,{ type: 'module'});
       console.log('✅ Service Worker terdaftar:', reg.scope);
       console.log("SW URL:", swUrl);
       return reg;

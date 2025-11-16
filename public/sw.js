@@ -2,16 +2,12 @@
 // 1. CUSTOM ASSETS (MANUAL CACHE)
 // =============================
 const CUSTOM_ASSETS = [
-  '/',
+   '/',
   '/index.html',
   '/offline.html',
   '/manifest.json',
   '/favicon.png',
-
-  // CSS
   '/styles/styles.css',
-
-  // Scripts
   '/scripts/index.js',
   '/scripts/routes/routes.js',
   '/scripts/pages/home/home-page.js',
@@ -19,8 +15,6 @@ const CUSTOM_ASSETS = [
   '/scripts/pages/login/login-page.js',
   '/scripts/pages/register/register-page.js',
   '/scripts/pages/favorite/favorite-page.js',
-
-  // Icons
   '/icons/icon-192.png',
   '/icons/icon-512.png',
 ];

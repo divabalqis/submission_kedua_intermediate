@@ -13,7 +13,7 @@ const STATIC_ASSETS = [
   // Static file yang tidak berubah
   "/manifest.json",
   "/favicon.png",
-  //"/styles/styles.css",
+  "/styles.css",
 
   // Ikon
   "/icons/icon-192.png",

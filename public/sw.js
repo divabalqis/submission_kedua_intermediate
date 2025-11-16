@@ -10,7 +10,7 @@ const STATIC_ASSETS = [
   "/offline.html",
   "/manifest.json",
   "/favicon.png",
-  "/styles/styles.css",
+  // "/styles/styles.css",
   "/icons/icon-192.png",
   "/icons/icon-512.png",
 ];
@@ -18,21 +18,12 @@ const STATIC_ASSETS = [
 // =============================
 // 1. INSTALL — CACHE STATIC FILE
 // =============================
-self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(async (cache) => {
-      for (const asset of STATIC_ASSETS) {
-        try {
-          const res = await fetch(asset);
-          console.log(asset, res.status);
-        } catch (e) {
-          console.log("ERROR FETCH:", asset);
-        }
-      }
-      return cache.addAll(STATIC_ASSETS);
-    })
+self.addEventListener('install', evt => {
+  evt.waitUntil(
+    caches.open(STATIC_CACHE).then(cache => cache.addAll(STATIC_ASSETS))
   );
 });
+
 
 // =============================
 // 2. ACTIVATE — HAPUS CACHE LAMA

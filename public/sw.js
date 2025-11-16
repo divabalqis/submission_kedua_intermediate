@@ -20,12 +20,18 @@ const STATIC_ASSETS = [
 // =============================
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      console.log("Caching static assets...");
+    caches.open(CACHE_NAME).then(async (cache) => {
+      for (const asset of STATIC_ASSETS) {
+        try {
+          const res = await fetch(asset);
+          console.log(asset, res.status);
+        } catch (e) {
+          console.log("ERROR FETCH:", asset);
+        }
+      }
       return cache.addAll(STATIC_ASSETS);
     })
   );
-  self.skipWaiting();
 });
 
 // =============================

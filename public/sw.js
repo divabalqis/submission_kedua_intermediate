@@ -25,10 +25,21 @@ const STATIC_ASSETS = [
 // =============================
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS))
+    (async () => {
+      const cache = await caches.open(CACHE_NAME);
+
+      try {
+        await cache.addAll(STATIC_ASSETS);
+        console.log("📌 Semua asset berhasil dicache!");
+      } catch (err) {
+        console.error("❌ Gagal cache:", err);
+      }
+    })()
   );
+
   self.skipWaiting();
 });
+
 
 // =============================
 // 2. ACTIVATE — HAPUS CACHE LAMA

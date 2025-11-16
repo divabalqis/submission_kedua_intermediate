@@ -20,7 +20,7 @@ const STATIC_ASSETS = [
 // =============================
 self.addEventListener('install', evt => {
   evt.waitUntil(
-    caches.open(STATIC_CACHE).then(cache => cache.addAll(STATIC_ASSETS))
+    caches.open(CACHE_NAME ).then(cache => cache.addAll(STATIC_ASSETS))
   );
 });
 
